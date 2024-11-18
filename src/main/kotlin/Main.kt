@@ -2,10 +2,30 @@ package org.example
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.zip
 
-fun main() {
-    getListId(10).onEach { i -> println(i) }
-    //getListOfPassword("K", 3)?.onEach { i -> println(i) }
+suspend fun main() {
+    var countUsers = 0
+    var firstChar = ""
+    println("Для скольких пользователей нужно создать пароли?")
+    countUsers = readln().toInt()
+    println("C какого символа они должны начинаться?")
+    firstChar = readln().first().toString()
+
+    val idsFlow = getIdFlow(countUsers)
+    val passwordsFlow = getPasswordFlow(firstChar, countUsers)
+
+    // Измерение времени
+    val startTime = System.currentTimeMillis()
+
+    idsFlow.zip(passwordsFlow) { id, password -> id to password }
+        .collect { (id, password) ->
+            println("User ID: $id, Password: $password")
+        }
+
+    val endTime = System.currentTimeMillis()
+    println("Время выполнения: ${endTime - startTime} мс")
+
 }
 
 fun createPassword(): String {
@@ -37,14 +57,8 @@ fun getListId(length: Int): List<String> {
     var ids = mutableListOf<String>()
     var count = 0
     while (ids.size < length) {
-        var id = ""
         count++
-        if (count.toString().length < 6) {
-            for (i in 0..6 - count.toString().length) {
-                id += 0
-            }
-        }
-        id+=count
+        var id = count.toString().padStart(6, '0')
         ids.add(id)
     }
     return ids.toList()
