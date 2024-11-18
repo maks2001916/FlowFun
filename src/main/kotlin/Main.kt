@@ -1,5 +1,8 @@
 package org.example
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+
 fun main() {
     getListId(10).onEach { i -> println(i) }
     //getListOfPassword("K", 3)?.onEach { i -> println(i) }
@@ -19,7 +22,7 @@ fun createPassword(): String {
     return password
 }
 
-fun getListOfPassword(input: String, length: Int): List<String>? {
+fun getListOfPassword(input: String, length: Int): List<String> {
     var passwords = mutableListOf<String>()
     while (passwords.size < length) {
         var password = createPassword()
@@ -45,4 +48,12 @@ fun getListId(length: Int): List<String> {
         ids.add(id)
     }
     return ids.toList()
+}
+
+fun getIdFlow(length: Int): Flow<String> {
+    return getListId(length).asFlow()
+}
+
+fun getPasswordFlow(input: String, length: Int): Flow<String> {
+    return getListOfPassword(input, length).asFlow()
 }
