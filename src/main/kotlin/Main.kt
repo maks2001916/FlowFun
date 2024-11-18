@@ -1,9 +1,7 @@
 package org.example
 
 fun main() {
-    for (i in 1..10) {
-        println(createPassword())
-    }
+    getListOfPassword("K", 3)?.onEach { i -> println(i) }
 }
 
 fun createPassword(): String {
@@ -18,4 +16,15 @@ fun createPassword(): String {
         }
     }
     return password
+}
+
+fun getListOfPassword(input: String, length: Int): List<String>? {
+    var passwords = mutableListOf<String>()
+    while (passwords.size < length) {
+        var password = createPassword()
+        if (password.first() == input.first()) {
+            passwords.add(password)
+        }
+    }
+    return passwords.toList()
 }
